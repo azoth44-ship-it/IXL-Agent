@@ -1,0 +1,4 @@
+interface:
+  display_name: "IXL Agent"
+  short_description: "Verified IXL practice with a persistent browser"
+  default_prompt: "Use $ixl-agent to practice the supplied IXL skill toward my SmartScore goal, stopping on incorrect or unknown feedback."

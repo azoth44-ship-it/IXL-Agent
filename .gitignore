@@ -1,0 +1,15 @@
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.venv/
+.deps/
+.env
+.env.*
+browser-profile/
+*profile*/
+reports/
+screenshots/
+STOP
+*.log
+*.zip
+*.skill
