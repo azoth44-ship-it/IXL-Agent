@@ -1,15 +1,15 @@
 # Running the persistent host
 
-Use a full Windows Python 3.11+ interpreter, Playwright and SymPy. Prefer an existing compatible environment. Do not install dependencies globally or overwrite an existing authenticated profile blindly. `scripts/install.ps1` creates a venv inside the chosen workspace. Chrome is the default channel; use `--channel msedge` for installed Edge. Do not assume the Windows Store python alias is a working interpreter.
+Use a full Windows Python 3.11+ interpreter, Playwright and SymPy. Reuse the project interpreter if it can import `playwright.sync_api` and `sympy`. Otherwise `scripts/install.ps1` probes the Python launcher and the installed Codex runtime, and returns the path of the project venv interpreter. A broken venv is left intact and the installer creates a clean sibling. Chrome is the default channel. Use `--channel msedge` for installed Edge.
 
 Example (replace absolute paths with this installed skill and the user's chosen workspace):
 
 ```powershell
-& '<skill>\scripts\install.ps1' -Workspace '<workspace>' -Python '<python.exe>'
-& '<workspace>\.venv\Scripts\python.exe' -u '<skill>\scripts\session.py' --workspace '<workspace>' --url 'https://www.ixl.com/math/algebra-2/identify-probability-distributions'
+$ixlPython = & '<skill>\scripts\install.ps1' -Workspace '<workspace>' | Select-Object -Last 1
+& $ixlPython -u '<skill>\scripts\session.py' --workspace '<workspace>' --url 'https://www.ixl.com/math/algebra-2/identify-probability-distributions'
 ```
 
-Use a tool that keeps the subprocess and stdin session alive. Retain its session identifier in the chat's working notes. `--profile` can point to a previously authorized application profile; do not open it concurrently in two hosts. It remains local and is not copied into the skill. Existing authenticated browser sessions cannot be attached merely by launching another process; reuse their actual host or close it only when the user intends to switch hosts.
+Use a stable workspace folder for the host so local adapters and the profile are available on the next invocation. Keep the subprocess and stdin session alive. Retain its session identifier in the chat's working notes. `--profile` can point to a previously authorized application profile; do not open it concurrently in two hosts. It remains local and is not copied into the skill. Existing authenticated browser sessions cannot be attached merely by launching another process; reuse their actual host or close it only when the user intends to switch hosts.
 
 Wait for `ready`, then allow manual login if necessary. Send one JSON command per line through the existing session stdin:
 
@@ -28,7 +28,9 @@ After a goal, pause or exception, continue using the same host. To switch skills
 {"action":"practice","target_score":80,"strict":true,"max_seconds":180,"permitted_practice":true,"submission_authorized":true}
 ```
 
-`strict:true` means greater than the target. The command does not change the requested IXL skill or use model inference. Unsupported URLs can be inspected but practice refuses them.
+`strict:true` means greater than the target. When the built-in adapter does not match the active format, prepare a [local adapter](adaptation.md) in the same host, verify the live input and resend the original goal with its `adapter` name.
+
+For a built-in adapter error, inspect the latest result and the live page before resuming. A last row without confirmed feedback, a click error or a page transition can mean the previous answer was submitted. Resume adaptation only after establishing that the failure happened before submission or that the previous submission succeeded.
 
 ## Pause and cancellation
 

@@ -15,3 +15,9 @@ During earlier rational-derivative development, two incorrectly formatted editor
 Codex ChatGPT authentication/thread startup worked, but inference timed out; no completed model answer was scored. There is no paid API fallback. Browser profile persistence across normal restarts worked, but automatic crash reconnection and uncertain in-flight submission recovery were not implemented. Keep these limits visible rather than calling the entire project universally end-to-end verified.
 
 The new portable host must pass local contract tests. That validates packaging and execution guards, not a new real-account session. Only run a live session when the user actually requests permitted practice.
+
+## Implicit differentiation tangent lines
+
+On 2026-11-19, one permitted session used the same Chrome tab to advance from 15 to 84 across nine submissions. It covered a slope field, three point-slope fields, and a full equation field. Every submission was followed by a higher displayed SmartScore. The first six consecutive submissions took 13.41 seconds in total, excluding setup and adaptation.
+
+The move from 69 to 75 required read-only inspection of the new equation and score before resuming. Consecutive questions shared the same point-slope instructions, so the automatic feedback check timed out even though the equation and displayed score changed. Fully automatic recovery for this case remains unverified.

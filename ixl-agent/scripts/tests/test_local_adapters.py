@@ -1,4 +1,4 @@
-import json,importlib
+import json,importlib,os
 import pytest
 from ixl_agent.browser import IXLBrowser
 from test_host_contract import URLS
@@ -7,6 +7,8 @@ from test_host_contract import URLS
 def test_portable_adapter_local_submission(mode,tmp_path,monkeypatch):
  monkeypatch.chdir(tmp_path)
  config={'profile':str(tmp_path/'profile'),'url':'about:blank','question':'#question','score':'#score','input':'#answer','choices':'[role=radio]','submit':'#submit','feedback':'#feedback','complete':'#complete'}
+ if os.environ.get('IXL_TEST_BROWSER_CHANNEL'):
+  config['channel']=os.environ['IXL_TEST_BROWSER_CHANNEL']
  b=IXLBrowser(config)
  try:
   b.start(headless=True);page=b.page
